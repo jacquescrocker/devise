@@ -21,4 +21,9 @@ class User
   def self.destroy_all
     all.destroy
   end
+  
+  def update_attribute(name, value)
+    send("#{name}=", value)
+    save(:validate => false)
+  end
 end

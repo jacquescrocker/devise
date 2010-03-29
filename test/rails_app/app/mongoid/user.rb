@@ -18,4 +18,9 @@ class User
   def ==(other)
     other.is_a?(self.class) && _id == other._id
   end
+  
+  def update_attribute(name, value)
+    send("#{name}=", value)
+    save(:validate => false)
+  end
 end
