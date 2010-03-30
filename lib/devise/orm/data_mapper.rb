@@ -88,10 +88,6 @@ module Devise
         def update_attributes(*args)
           update(*args)
         end
-        
-        def lock!
-          self.reload
-        end
       end
     end
   end

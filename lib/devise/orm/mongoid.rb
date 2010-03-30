@@ -24,10 +24,6 @@ module Devise
       end
       
       module Compatibility
-        def lock!
-          self.reload
-        end
-        
         def save(validate = true)
           if validate.is_a?(Hash) && validate.has_key?(:validate)
             validate = validate[:validate]
