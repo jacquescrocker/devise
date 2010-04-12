@@ -1,8 +1,5 @@
-require 'devise/models/activatable'
-
 module Devise
   module Models
-
     # Confirmable is responsible to verify if an account is already confirmed to
     # sign in, and to send emails with confirmation instructions.
     # Confirmation instructions are sent to the user email after creating a
@@ -30,7 +27,6 @@ module Devise
     #   User.find(1).resend_confirmation! # generates a new token and resent it
     module Confirmable
       extend ActiveSupport::Concern
-      include Devise::Models::Activatable
 
       included do
         before_create :generate_confirmation_token, :if => :confirmation_required?
@@ -127,7 +123,7 @@ module Devise
         # this token is being generated
         def generate_confirmation_token
           self.confirmed_at = nil
-          self.confirmation_token = Devise.friendly_token
+          self.confirmation_token = self.class.confirmation_token
           self.confirmation_sent_at = Time.now.utc
         end
 
@@ -150,6 +146,10 @@ module Devise
           confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
           confirmable.confirm! if confirmable.persisted?
           confirmable
+        end
+
+        def confirmation_token
+          Devise.friendly_token
         end
 
         Devise::Models.config(self, :confirm_within)

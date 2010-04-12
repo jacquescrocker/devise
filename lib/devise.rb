@@ -22,13 +22,17 @@ module Devise
     autoload :Sha1, 'devise/encryptors/sha1'
   end
 
+  module Strategies
+    autoload :Base, 'devise/strategies/base'
+    autoload :Authenticatable, 'devise/strategies/authenticatable'
+  end
+
   # Constants which holds devise configuration for extensions. Those should
   # not be modified by the "end user".
-  ALL            = []
-  CONTROLLERS    = {}
-  ROUTES         = []
-  STRATEGIES     = ActiveSupport::OrderedHash.new
-  FLASH_MESSAGES = [:unauthenticated]
+  ALL         = []
+  CONTROLLERS = ActiveSupport::OrderedHash.new
+  ROUTES      = ActiveSupport::OrderedHash.new
+  STRATEGIES  = ActiveSupport::OrderedHash.new
 
   # True values used to check params
   TRUE_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE']
@@ -54,15 +58,27 @@ module Devise
   # Keys used when authenticating an user.
   mattr_accessor :authentication_keys
   @@authentication_keys = [ :email ]
-  
-  # Range validation for password length
-  mattr_accessor :password_length
-  @@password_length = 6..20
-  
+
+  # If http authentication is enabled by default.
+  mattr_accessor :http_authenticatable
+  @@http_authenticatable = true
+
+  # If params authenticatable is enabled by default.
+  mattr_accessor :params_authenticatable
+  @@params_authenticatable = true
+
+  # The realm used in Http Basic Authentication.
+  mattr_accessor :http_authentication_realm
+  @@http_authentication_realm = "Application"
+
   # Email regex used to validate email formats. Adapted from authlogic.
   mattr_accessor :email_regexp
   @@email_regexp = /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i
-  
+
+  # Range validation for password length
+  mattr_accessor :password_length
+  @@password_length = 6..20
+
   # Time interval where the remember me token is valid.
   mattr_accessor :remember_for
   @@remember_for = 2.weeks
@@ -93,14 +109,19 @@ module Devise
   mattr_accessor :scoped_views
   @@scoped_views = false
 
-  # Number of authentication tries before locking an account
-  mattr_accessor :maximum_attempts
-  @@maximum_attempts = 20
+  # Defines which strategy can be used to lock an account.
+  # Values: :failed_attempts, :none
+  mattr_accessor :lock_strategy
+  @@lock_strategy = :failed_attempts
 
   # Defines which strategy can be used to unlock an account.
   # Values: :email, :time, :both
   mattr_accessor :unlock_strategy
   @@unlock_strategy = :both
+
+  # Number of authentication tries before locking an account
+  mattr_accessor :maximum_attempts
+  @@maximum_attempts = 20
 
   # Time interval to unlock the account if :time is defined as unlock_strategy.
   mattr_accessor :unlock_in
@@ -122,12 +143,8 @@ module Devise
   mattr_accessor :token_authentication_key
   @@token_authentication_key = :auth_token
 
-  # The realm used in Http Basic Authentication.
-  mattr_accessor :http_authentication_realm
-  @@http_authentication_realm = "Application"
-
   # Private methods to interface with Warden.
-  mattr_reader :warden_config
+  mattr_accessor :warden_config
   @@warden_config = nil
   @@warden_config_block = nil
 
@@ -171,11 +188,10 @@ module Devise
   #
   def self.add_module(module_name, options = {})
     ALL << module_name
-    options.assert_valid_keys(:strategy, :model, :controller, :route, :flash, :passive_strategy)
+    options.assert_valid_keys(:strategy, :model, :controller, :route)
 
     config = {
       :strategy => STRATEGIES,
-      :flash => FLASH_MESSAGES,
       :route => ROUTES,
       :controller => CONTROLLERS
     }
@@ -216,12 +232,8 @@ module Devise
 
   # A method used internally to setup warden manager from the Rails initialize
   # block.
-  def self.configure_warden(config) #:nodoc:
-    config.failure_app   = Devise::FailureApp
-    config.default_scope = Devise.default_scope
-
-    @@warden_config = config
-    @@warden_config_block.try :call, config
+  def self.configure_warden! #:nodoc:
+    @@warden_config_block.try :call, Devise.warden_config
   end
 
   # Generate a friendly string randomically to be used as token.

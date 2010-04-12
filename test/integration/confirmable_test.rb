@@ -11,7 +11,7 @@ class ConfirmationTest < ActionController::IntegrationTest
     ActionMailer::Base.deliveries.clear
 
     visit new_user_session_path
-    click_link 'Didn\'t receive confirmation instructions?'
+    click_link "Didn't receive confirmation instructions?"
 
     fill_in 'email', :with => user.email
     click_button 'Resend confirmation instructions'
@@ -88,9 +88,9 @@ class ConfirmationTest < ActionController::IntegrationTest
 
   test 'error message is configurable by resource name' do
     store_translations :en, :devise => {
-      :sessions => { :admin => { :unconfirmed => "Not confirmed user" } }
+      :failure => { :user => { :unconfirmed => "Not confirmed user" } }
     } do
-      get new_admin_session_path(:unconfirmed => true)
+      sign_in_as_user(:confirm => false)
       assert_contain 'Not confirmed user'
     end
   end

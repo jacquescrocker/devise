@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise}
-  s.version = "1.1.pre4"
+  s.version = "1.1.rc0"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jos\303\251 Valim", "Carlos Ant\303\264nio"]
-  s.date = %q{2010-03-28}
+  s.date = %q{2010-04-06}
   s.description = %q{Flexible authentication solution for Rails with Warden}
   s.email = %q{contact@plataformatec.com.br}
   s.extra_rdoc_files = [
@@ -57,15 +57,15 @@ Gem::Specification.new do |s|
      "lib/devise/encryptors/sha512.rb",
      "lib/devise/failure_app.rb",
      "lib/devise/hooks/activatable.rb",
+     "lib/devise/hooks/forgetable.rb",
      "lib/devise/hooks/rememberable.rb",
      "lib/devise/hooks/timeoutable.rb",
      "lib/devise/hooks/trackable.rb",
      "lib/devise/mapping.rb",
      "lib/devise/models.rb",
-     "lib/devise/models/activatable.rb",
      "lib/devise/models/authenticatable.rb",
      "lib/devise/models/confirmable.rb",
-     "lib/devise/models/http_authenticatable.rb",
+     "lib/devise/models/database_authenticatable.rb",
      "lib/devise/models/lockable.rb",
      "lib/devise/models/recoverable.rb",
      "lib/devise/models/registerable.rb",
@@ -84,7 +84,7 @@ Gem::Specification.new do |s|
      "lib/devise/schema.rb",
      "lib/devise/strategies/authenticatable.rb",
      "lib/devise/strategies/base.rb",
-     "lib/devise/strategies/http_authenticatable.rb",
+     "lib/devise/strategies/database_authenticatable.rb",
      "lib/devise/strategies/rememberable.rb",
      "lib/devise/strategies/token_authenticatable.rb",
      "lib/devise/test_helpers.rb",
@@ -108,8 +108,8 @@ Gem::Specification.new do |s|
      "test/devise_test.rb",
      "test/encryptors_test.rb",
      "test/failure_app_test.rb",
-     "test/integration/authenticatable_test.rb",
      "test/integration/confirmable_test.rb",
+     "test/integration/database_authenticatable_test.rb",
      "test/integration/http_authenticatable_test.rb",
      "test/integration/lockable_test.rb",
      "test/integration/recoverable_test.rb",
@@ -122,9 +122,8 @@ Gem::Specification.new do |s|
      "test/mailers/reset_password_instructions_test.rb",
      "test/mailers/unlock_instructions_test.rb",
      "test/mapping_test.rb",
-     "test/models/authenticatable_test.rb",
      "test/models/confirmable_test.rb",
-     "test/models/http_authenticatable_test.rb",
+     "test/models/database_authenticatable_test.rb",
      "test/models/lockable_test.rb",
      "test/models/recoverable_test.rb",
      "test/models/rememberable_test.rb",
@@ -157,7 +156,10 @@ Gem::Specification.new do |s|
      "test/rails_app/config/initializers/backtrace_silencers.rb",
      "test/rails_app/config/initializers/devise.rb",
      "test/rails_app/config/initializers/inflections.rb",
+     "test/rails_app/config/initializers/secret_token.rb",
      "test/rails_app/config/routes.rb",
+     "test/rails_app/db/migrate/20100401102949_create_tables.rb",
+     "test/rails_app/db/schema.rb",
      "test/routes_test.rb",
      "test/support/assertions.rb",
      "test/support/helpers.rb",
@@ -173,12 +175,12 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<warden>, ["~> 0.10.2"])
+      s.add_runtime_dependency(%q<warden>, ["~> 0.10.3"])
     else
-      s.add_dependency(%q<warden>, ["~> 0.10.2"])
+      s.add_dependency(%q<warden>, ["~> 0.10.3"])
     end
   else
-    s.add_dependency(%q<warden>, ["~> 0.10.2"])
+    s.add_dependency(%q<warden>, ["~> 0.10.3"])
   end
 end
 

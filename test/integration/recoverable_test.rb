@@ -4,7 +4,7 @@ class PasswordTest < ActionController::IntegrationTest
 
   def visit_new_password_path
     visit new_user_session_path
-    click_link 'Forgot password?'
+    click_link 'Forgot your password?'
   end
 
   def request_forgot_password(&block)
@@ -134,7 +134,7 @@ class PasswordTest < ActionController::IntegrationTest
     request_forgot_password
     reset_password :reset_password_token => user.reload.reset_password_token
 
-    assert_current_path new_user_session_path(:unconfirmed => true)
+    assert_equal new_user_session_path, @request.path
     assert !warden.authenticated?(:user)
   end
 

@@ -11,7 +11,7 @@ class LockTest < ActionController::IntegrationTest
     ActionMailer::Base.deliveries.clear
 
     visit new_user_session_path
-    click_link 'Didn\'t receive unlock instructions?'
+    click_link "Didn't receive unlock instructions?"
 
     fill_in 'email', :with => user.email
     click_button 'Resend unlock instructions'
@@ -26,7 +26,7 @@ class LockTest < ActionController::IntegrationTest
     ActionMailer::Base.deliveries.clear
 
     visit new_user_session_path
-    click_link 'Didn\'t receive unlock instructions?'
+    click_link "Didn't receive unlock instructions?"
 
     fill_in 'email', :with => user.email
     click_button 'Resend unlock instructions'
@@ -81,19 +81,21 @@ class LockTest < ActionController::IntegrationTest
 
   test "user should not send a new e-mail if already locked" do
     user = create_user(:locked => true)
-    user.update_attribute(:failed_attempts, User.maximum_attempts + 1)
+    user.failed_attempts = User.maximum_attempts + 1
+    user.save!
+
     ActionMailer::Base.deliveries.clear
 
     sign_in_as_user(:password => "invalid")
-    assert_contain 'Invalid email or password.'
+    assert_contain 'Your account is locked.'
     assert ActionMailer::Base.deliveries.empty?
   end
 
   test 'error message is configurable by resource name' do
     store_translations :en, :devise => {
-      :sessions => { :admin => { :locked => "You are locked!" } }
+      :failure => { :user => { :locked => "You are locked!" } }
     } do
-      get new_admin_session_path(:locked => true)
+      user = sign_in_as_user(:locked => true)
       assert_contain 'You are locked!'
     end
   end

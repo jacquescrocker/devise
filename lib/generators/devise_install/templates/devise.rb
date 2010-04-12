@@ -4,7 +4,24 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in DeviseMailer.
   config.mailer_sender = "please-change-me@config-initializers-devise.com"
 
-  # ==> Configuration for :authenticatable
+  # ==> Configuration for any authentication mechanism
+  # Configure which keys are used when authenticating an user. By default is
+  # just :email. You can configure it to use [:username, :subdomain], so for
+  # authenticating an user, both parameters are required. Remember that those
+  # parameters are used only when authenticating and not when retrieving from
+  # session. If you need permissions, you should implement that in a before filter.
+  # config.authentication_keys = [ :email ]
+
+  # Tell if authentication through request.params is enabled. True by default.
+  # config.params_authenticatable = true
+
+  # Tell if authentication through HTTP Basic Auth is enabled. True by default.
+  # config.http_authenticatable = true
+
+  # The realm used in Http Basic Authentication
+  # config.http_authentication_realm = "Application"
+
+  # ==> Configuration for :database_authenticatable
   # Invoke `rake secret` and use the printed value to setup a pepper to generate
   # the encrypted password. By default no pepper is used.
   # config.pepper = "rake secret output"
@@ -18,16 +35,6 @@ Devise.setup do |config|
   # stretches above to 20 for default behavior) and :restful_authentication_sha1
   # (then you should set stretches to 10, and copy REST_AUTH_SITE_KEY to pepper)
   # config.encryptor = :sha1
-
-  # Configure which keys are used when authenticating an user. By default is
-  # just :email. You can configure it to use [:username, :subdomain], so for
-  # authenticating an user, both parameters are required. Remember that those
-  # parameters are used only when authenticating and not when retrieving from
-  # session. If you need permissions, you should implement that in a before filter.
-  # config.authentication_keys = [ :email ]
-
-  # The realm used in Http Basic Authentication
-  # config.http_authentication_realm = "Application"
 
   # ==> Configuration for :confirmable
   # The time you want give to your user to confirm his account. During this time
@@ -51,14 +58,21 @@ Devise.setup do |config|
   # config.timeout_in = 10.minutes
 
   # ==> Configuration for :lockable
-  # Number of authentication tries before locking an account.
-  # config.maximum_attempts = 20
+  # Defines which strategy will be used to lock an account.
+  # :failed_attempts = Locks an account after a number of failed attempts to sign in.
+  # :none            = No lock strategy. You should handle locking by yourself.
+  # config.lock_strategy = :failed_attempts
 
   # Defines which strategy will be used to unlock an account.
   # :email = Sends an unlock link to the user email
   # :time  = Reanables login after a certain ammount of time (see :unlock_in below)
-  # :both  = enables both strategies
+  # :both  = Enables both strategies
+  # :none  = No unlock strategy. You should handle unlocking by yourself.
   # config.unlock_strategy = :both
+
+  # Number of authentication tries before locking an account if lock_strategy
+  # is failed attempts.
+  # config.maximum_attempts = 20
 
   # Time interval to unlock the account if :time is enabled as unlock_strategy.
   # config.unlock_in = 1.hour
@@ -97,6 +111,6 @@ Devise.setup do |config|
   #     twitter.consumer_key  = <YOUR CONSUMER KEY>
   #     twitter.options :site => 'http://twitter.com'
   #   end
-  #   manager.default_strategies.unshift :twitter_oauth
+  #   manager.default_strategies(:scope => :user).unshift :twitter_oauth
   # end
 end

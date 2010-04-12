@@ -1,8 +1,8 @@
 source "http://gemcutter.org"
 
 # Need to install Rails from source
-gem "rails", :git => "git://github.com/rails/rails.git"
-gem "warden", "0.10.2"
+gem "rails", "3.0.0.beta2"
+gem "warden", "0.10.3"
 gem "sqlite3-ruby", :require => "sqlite3"
 gem "webrat", "0.7"
 gem "mocha", :require => false
@@ -19,7 +19,7 @@ group :mongoid do
 end
 
 group :data_mapper do
-  gem 'do_sqlite3', '>= 0.10.1'
+  gem "do_sqlite3", '>= 0.10.1'
   gem "dm-core", :git => "git://github.com/datamapper/dm-core.git"
   gem "dm-validations", :git => "git://github.com/datamapper/dm-more.git"
   gem "dm-timestamps", :git => "git://github.com/datamapper/dm-more.git"
