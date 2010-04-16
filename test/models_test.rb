@@ -1,9 +1,12 @@
 require 'test_helper'
 
 class Configurable < User
-  devise :authenticatable, :confirmable, :rememberable, :timeoutable, :lockable,
+  devise :database_authenticatable, :confirmable, :rememberable, :timeoutable, :lockable,
          :stretches => 15, :pepper => 'abcdef', :confirm_within => 5.days,
          :remember_for => 7.days, :timeout_in => 15.minutes, :unlock_in => 10.days
+end
+
+class Inheritable < Admin
 end
 
 class ActiveRecordTest < ActiveSupport::TestCase
@@ -22,8 +25,12 @@ class ActiveRecordTest < ActiveSupport::TestCase
     end
   end
 
-  test 'add modules cherry pick' do
+  test 'can cherry pick modules' do
     assert_include_modules Admin, :database_authenticatable, :registerable, :timeoutable, :recoverable
+  end
+
+  test 'chosen modules are inheritable' do
+    assert_include_modules Inheritable, :database_authenticatable, :registerable, :timeoutable, :recoverable
   end
 
   test 'order of module inclusion' do

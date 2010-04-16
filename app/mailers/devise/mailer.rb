@@ -24,7 +24,7 @@ class Devise::Mailer < ::ActionMailer::Base
       @resource       = instance_variable_set("@#{@devise_mapping.name}", record)
 
       template_path = ["devise/mailer"]
-      template_path.unshift "#{@devise_mapping.as}/mailer" if self.class.scoped_views?
+      template_path.unshift "#{@devise_mapping.plural}/mailer" if self.class.scoped_views?
 
       headers = {
         :subject => translate(@devise_mapping, action),
@@ -35,6 +35,13 @@ class Devise::Mailer < ::ActionMailer::Base
 
       headers.merge!(record.headers_for(action)) if record.respond_to?(:headers_for)
       mail(headers)
+    end
+
+    # Fix a bug in Rails 3 beta 3
+    def mail(*) #:nodoc:
+      super
+      @_message["template_path"] = nil
+      @_message
     end
 
     def mailer_sender(mapping)

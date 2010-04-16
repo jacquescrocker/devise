@@ -61,46 +61,18 @@ module Devise
         ActiveSupport::Deprecation.warn ":http_authenticatable as module is deprecated and is on by default. Revert by setting :http_authenticatable => false.", caller
       end
 
-      @devise_modules = Devise::ALL & modules.map(&:to_sym).uniq
+      self.devise_modules += Devise::ALL & modules.map(&:to_sym).uniq
 
       devise_modules_hook! do
-        @devise_modules.each { |m| include Devise::Models.const_get(m.to_s.classify) }
+        devise_modules.each { |m| include Devise::Models.const_get(m.to_s.classify) }
         options.each { |key, value| send(:"#{key}=", value) }
       end
-    end
-
-    # Stores all modules included inside the model, so we are able to verify
-    # which routes are needed.
-    def devise_modules
-      @devise_modules ||= []
     end
 
     # The hook which is called inside devise. So your ORM can include devise
     # compatibility stuff.
     def devise_modules_hook!
       yield
-    end
-
-    # Find an initialize a record setting an error if it can't be found.
-    def find_or_initialize_with_error_by(attribute, value, error=:invalid)
-      if value.present?
-        conditions = { attribute => value }
-        record = find(:first, :conditions => conditions)
-      end
-
-      unless record
-        record = new
-
-        if value.present?
-          record.send(:"#{attribute}=", value)
-        else
-          error = :blank
-        end
-
-        record.errors.add(attribute, error)
-      end
-
-      record
     end
   end
 end
