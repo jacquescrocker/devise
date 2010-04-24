@@ -35,15 +35,31 @@ class DeviseGenerator < Rails::Generators::NamedBase
   end
 
   def inject_devise_config_into_model
-    inject_into_class model_path, class_name, <<-CONTENT
+    devise_class_setup = <<-CONTENT
+
   # Include default devise modules. Others available are:
   # :token_authenticatable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
-
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation
 CONTENT
+    
+    case options[:orm].to_s
+    when "mongoid"
+      inject_into_class model_path, class_name, devise_class_setup
+      gsub_file model_path, "include Mongoid::Document\n", ""
+      inject_into_class model_path, class_name, "  include Mongoid::Document"
+    when "datamapper"
+      inject_into_class model_path, class_name, devise_class_setup
+      gsub_file model_path, "include DataMapper::Resource\n", ""
+      inject_into_class model_path, class_name, <<-CONTENT
+        include DataMapper::Resource
+      CONTENT
+    when "active_record"
+      inject_into_class model_path, class_name, devise_class_setup + <<-CONTENT
+        # Setup accessible (or protected) attributes for your model
+        attr_accessible :email, :password, :password_confirmation
+      CONTENT
+    end
   end
 
   def copy_migration_template
