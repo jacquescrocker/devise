@@ -47,18 +47,17 @@ CONTENT
     when "mongoid"
       inject_into_class model_path, class_name, devise_class_setup
       gsub_file model_path, "include Mongoid::Document\n", ""
-      inject_into_class model_path, class_name, "  include Mongoid::Document"
+      inject_into_class model_path, class_name, "  include Mongoid::Document\n"
     when "datamapper"
       inject_into_class model_path, class_name, devise_class_setup
       gsub_file model_path, "include DataMapper::Resource\n", ""
-      inject_into_class model_path, class_name, <<-CONTENT
-        include DataMapper::Resource
-      CONTENT
+      inject_into_class model_path, class_name, "  include DataMapper::Resource\n"
     when "active_record"
       inject_into_class model_path, class_name, devise_class_setup + <<-CONTENT
-        # Setup accessible (or protected) attributes for your model
-        attr_accessible :email, :password, :password_confirmation
-      CONTENT
+
+  # Setup accessible (or protected) attributes for your model
+  attr_accessible :email, :password, :password_confirmation
+CONTENT
     end
   end
 
