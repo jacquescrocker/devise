@@ -41,6 +41,7 @@ class DeviseGenerator < Rails::Generators::NamedBase
   # :token_authenticatable, :lockable and :timeoutable
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
+
 CONTENT
     
     case options[:orm].to_s
@@ -54,7 +55,6 @@ CONTENT
       inject_into_class model_path, class_name, "  include DataMapper::Resource\n"
     when "active_record"
       inject_into_class model_path, class_name, devise_class_setup + <<-CONTENT
-
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation
 CONTENT
